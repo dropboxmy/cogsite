@@ -1,0 +1,85 @@
+{% extends 'confreg/base.html' %}
+{% load staticfiles %}
+
+{% block right_col_main %}
+
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+
+                    <form method="post"
+                    action="{% url 'conference_accommodation' %}">
+                    {%csrf_token%}
+
+                    <ul>
+                        {{ formset.as_ul }}
+                    </ul>
+
+                    <input type="submit">
+                    </form>
+
+
+
+                    </div>
+                    </div>
+                    </div>
+
+<!--################-->
+
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>{{page_title}}</h2>
+
+
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+
+                  {% for room in rooms %}
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="x_panel">
+                        <div class="x_title">
+                            <h2>Room: {{room.room}}<small>({{ room.capacity }})</small></h2>
+
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                <th>#</th>
+                                <th>Family Name</th>
+                                <th>Given Name</th>
+                                <th>registrant.id, accommodation.id</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            {% for item in obj %}
+                                <tr>
+                                <th scope="row">{{forloop.counter}}</th>
+                                <td>{{item.person.family_name}}</td>
+                                <td>{{item.person.given_name}}</td>
+                                <td>{{item.id}}, {{room.id}}, {{item.accommodation.accommodation.id}},</td>
+                                </tr>
+                                {% if item.accommodation.id == room.id %}
+                                {% endif %}
+                            {% endfor %}
+
+                            </tbody>
+                            </table>
+
+                        </div>
+                        </div>
+                    </div>
+                  {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+{% endblock %}

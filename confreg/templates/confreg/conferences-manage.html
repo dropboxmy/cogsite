@@ -1,0 +1,107 @@
+{% extends 'confreg/base.html' %}
+{% load staticfiles %}
+
+{% block right_col_main %}
+
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+
+<form method="post"
+action="{% url 'landing' %}">
+{%csrf_token%}
+
+{{ formset }}
+
+<input type="submit">
+</form>
+
+
+
+</div>
+</div>
+</div>
+
+<!--################-->
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>{{page_title}}</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      </li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                          <li><a href="#">Settings 1</a>
+                          </li>
+                          <li><a href="#">Settings 2</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><a class="close-link"><i class="fa fa-close"></i></a>
+                      </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Position 1<small>({{ applicants.count }})</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      </li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                          <li><a href="#">Settings 1</a>
+                          </li>
+                          <li><a href="#">Settings 2</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><a class="close-link"><i class="fa fa-close"></i></a>
+                      </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Conference</th>
+                          <th>Start Date</th>
+                          <th>Registrations</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+
+                      {% for conference in conferences %}
+                        <tr>
+                          <th scope="row">{{forloop.counter}}</th>
+                          <td>{{conference.name}}</td>
+                          <td>{{conference.start_date}}</td>
+                          <td>{{conference.registrant_count}}</td>
+                        </tr>
+                        
+                      {% endfor %}
+
+                      </tbody>
+                    </table>
+
+                  </div>
+                </div>
+              </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+{% endblock %}

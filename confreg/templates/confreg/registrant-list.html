@@ -1,0 +1,135 @@
+{% extends 'confreg/base.html' %}
+{% load staticfiles %}
+
+{% block right_col_main %}
+
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+
+                    <form method="post"
+                    action="{% url 'conference_registrant_create' %}">
+                    {%csrf_token%}
+
+                    <ul>
+                        {{ formset.as_ul }}
+                    </ul>
+
+                    <input type="submit">
+                    </form>
+
+
+
+                    </div>
+                    </div>
+                    </div>
+
+<!--################-->
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>{{sub_title}}</h2>
+
+
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="x_panel">
+                        <div class="x_title">
+                            <h2>People<small>({{ persons.count }})</small></h2>
+
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                <th>#</th>
+                                <th>Family Name</th>
+                                <th>Given Name</th>
+                                <th>DOB</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            {% for item in persons %}
+                                <tr>
+                                <th scope="row">{{forloop.counter}}</th>
+                                <td>{{item.family_name}}</td>
+                                <td>{{item.given_name}}</td>
+                                <td>{{item.date_of_birth}}</td>
+                                </tr>
+                            {% endfor %}
+
+                            </tbody>
+                            </table>
+
+                        </div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>{{page_title}}</h2>
+
+
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+
+                  {% for conference in conferences %}
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="x_panel">
+                        <div class="x_title">
+                            <h2>{{conference.name}}<small>({{ obj.count }})</small></h2>
+
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                <th>#</th>
+                                <th>Family Name</th>
+                                <th>Given Name</th>
+                                <th>DOB</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            {% for item in obj %}
+                                {% if item.conference.id == conference.id %}
+                                <tr>
+                                <th scope="row">{{forloop.counter}}</th>
+                                <td>{{item.person.family_name}}</td>
+                                <td>{{item.person.given_name}}</td>
+                                <td>{{item.person.date_of_birth}}</td>
+                                </tr>
+                                {% endif %}
+                            {% endfor %}
+
+                            </tbody>
+                            </table>
+
+                        </div>
+                        </div>
+                    </div>
+                  {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+{% endblock %}
