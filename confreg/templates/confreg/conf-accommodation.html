@@ -54,20 +54,18 @@
                                 <th>#</th>
                                 <th>Family Name</th>
                                 <th>Given Name</th>
-                                <th>registrant.id, accommodation.id</th>
+                                <th>registrant.id, accommodation.id, room_occupant </th>
                                 </tr>
                             </thead>
                             <tbody>
 
-                            {% for item in obj %}
+                            {% for item in room.accommodationroomoccupant_set.all %}
                                 <tr>
                                 <th scope="row">{{forloop.counter}}</th>
-                                <td>{{item.person.family_name}}</td>
-                                <td>{{item.person.given_name}}</td>
-                                <td>{{item.id}}, {{room.id}}, {{item.accommodation.accommodation.id}},</td>
+                                <td>{{item.registrant.person.family_name}}</td>
+                                <td>{{item.registrant.person.given_name}}</td>
+                                <td>{{item.registrant.person.id}}, {{room.id}}, {{item.accommodation.id}},</td>
                                 </tr>
-                                {% if item.accommodation.id == room.id %}
-                                {% endif %}
                             {% endfor %}
 
                             </tbody>

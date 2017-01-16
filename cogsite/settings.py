@@ -25,7 +25,7 @@ SECRET_KEY = '#l*u%rgv%#y_o1-@vbyn!$bz#7b@^p7$0tk+f3wup-zfh+&&^v'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['dropboxmy.pythonanywhere.com']
 
 
 # Application definition
@@ -76,12 +76,12 @@ WSGI_APPLICATION = 'cogsite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'confreg',
-        'USER': 'postgres', # bong, djangodjango
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'dropboxmy$confreg',
+        'USER': 'dropboxmy', # bong, djangodjango
         'PASSWORD': 'postgres',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'HOST': 'dropboxmy.mysql.pythonanywhere-services.com',
+        'PORT': '',
     }
 }
 
