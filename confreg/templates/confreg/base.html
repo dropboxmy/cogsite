@@ -11,7 +11,7 @@
     <title>{{app_name}} | {{page_title}}</title>
 
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="{{bootstrap_min_url}}" integrity="{{bootstrap_min_integrity}}" crossorigin="{{crossorigin}}">
+    <link rel="stylesheet" href="{{bootstrap_min_url}}" integrity="{{bootstrap_min_integrity}}" crossorigin="{{bootstrap_crossorigin}}">
     <!--<link href="{% static 'vendors/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">-->
 
     <!-- Font Awesome -->
@@ -32,7 +32,7 @@
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="{% url 'landing' %}" class="site_title"><i class="fa fa-paw"></i> <span>{{app_name}}</span></a>
+              <a href="{% url 'landing' %}" class="site_title"><i class="{{fa_class_logo}}"></i> <span>{{app_name}}</span></a>
             </div>
 
             <div class="clearfix"></div>
@@ -55,9 +55,10 @@
             <!-- sidebar menu -->
             <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
               <div class="menu_section">
-                <h3>Application</h3>
+                <h3>Conference</h3>
                 <ul class="nav side-menu">
-                  <li><a href="{% url 'landing' %}"><i class="fa fa-home" aria-hidden="true"></i> Home </a></li>
+                  <li><a href="{% url 'account_registrant_list' %}"><i class="fa fa-home" aria-hidden="true"></i> Registration </a></li>
+                  <li><a href="{% url 'landing' %}"><i class="fa fa-home" aria-hidden="true"></i> History </a></li>
 
 
               </div>
@@ -65,20 +66,19 @@
                 <h3>Administration</h3>
                 <ul class="nav side-menu">
 
-                  <li><a><i class="fa fa-fax" aria-hidden="true"></i> Applicants 
+                  <li><a href="{% url 'conference_registrant_list' %}"><i class="fa fa-check-square"></i> Registrants </a> </li>
+                  <li><a href="{% url 'conference_accommodation' %}"><i class="fa fa-hotel"></i> Accommodation </a> </li>
+                  <li><a href="{% url 'landing' %}"><i class="fa fa-black-tie"></i> Conferences </a> </li>
+                  <li><a><i class="fa fa-fax" aria-hidden="true"></i> Reports 
                     <!-- The asterisk should appear when there is a new applicant to be processed. -->
                     <span class="label label-success pull-right">*</span> <span class="fa fa-chevron-down">
                     </a>
                     <ul class="nav child_menu">
-                      <li><a href="{% url 'landing' %}">All</a></li>
-                      <li><a href="{% url 'landing' %}">Shortlisted</a></li>
-                      <li><a href="{% url 'landing' %}">Rejected</a></li>
+                      <li><a href="{% url 'landing' %}">Conference registrants</a></li>
+                      <li><a href="{% url 'landing' %}">All registrants</a></li>
                     </ul>
                   </li>
 
-                  <li><a href="{% url 'landing' %}"><i class="fa fa-graduation-cap"></i> Competencies </a></li>
-                  <li><a href="{% url 'landing' %}"><i class="fa fa-industry"></i> Positions </a> </li>
-                  <li><a href="{% url 'landing' %}"><i class="fa fa-institution"></i> Employers </a> </li>
 
                 </ul>
               </div>
@@ -128,7 +128,7 @@
                       </a>
                     </li>
                     <li><a href="javascript:;">Help</a></li>
-                    <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+                    <li><a href="{% url 'log_me_out' %}"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
                   </ul>
                 </li>
 
@@ -146,46 +146,11 @@
                           <span class="time">3 mins ago</span>
                         </span>
                         <span class="message">
-                          Film festivals used to be do-or-die moments for movie makers. They were where...
+                          {%lorem%}
                         </span>
                       </a>
                     </li>
-                    <li>
-                      <a>
-                        <span class="image"><img src="{% static 'images/img.jpg' %}" alt="Profile Image" /></span>
-                        <span>
-                          <span>John Smith</span>
-                          <span class="time">3 mins ago</span>
-                        </span>
-                        <span class="message">
-                          Film festivals used to be do-or-die moments for movie makers. They were where...
-                        </span>
-                      </a>
-                    </li>
-                    <li>
-                      <a>
-                        <span class="image"><img src="{% static 'images/img.jpg' %}" alt="Profile Image" /></span>
-                        <span>
-                          <span>John Smith</span>
-                          <span class="time">3 mins ago</span>
-                        </span>
-                        <span class="message">
-                          Film festivals used to be do-or-die moments for movie makers. They were where...
-                        </span>
-                      </a>
-                    </li>
-                    <li>
-                      <a>
-                        <span class="image"><img src="{% static 'images/img.jpg' %}" alt="Profile Image" /></span>
-                        <span>
-                          <span>John Smith</span>
-                          <span class="time">3 mins ago</span>
-                        </span>
-                        <span class="message">
-                          Film festivals used to be do-or-die moments for movie makers. They were where...
-                        </span>
-                      </a>
-                    </li>
+
                     <li>
                       <div class="text-center">
                         <a>
@@ -237,7 +202,7 @@
         <!-- footer content -->
         <footer>
           <div class="pull-right">
-            Unlocking the Power of Competence. Copyright <a href="http://www.mintragroup.com">Mintra Group</a> 2017. All rights reserved.
+            {{copyright_by}}. All rights reserved.
           </div>
           <div class="clearfix"></div>
         </footer>
