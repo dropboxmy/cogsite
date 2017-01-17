@@ -14,7 +14,10 @@ class Person(models.Model):
     date_of_birth = models.DateField(blank=True, null=True)
     conference = models.ManyToManyField(Conference, 
         through='Registrant',
-        through_fields=('person', 'conference'))
+        through_fields = ('person', 'conference'))
+    user = models.ManyToManyField(User,
+        through='PersonManagedByUser',
+        through_fields = ('person', 'user'))
     
     def __str__(self):
         return '{} {}'.format(self.family_name, self.given_name)
@@ -71,3 +74,9 @@ class UserProfile(models.Model):
             user_profile = UserProfile(user=user)
             user_profile.save()
     post_save.connect(create_profile, sender=User)
+
+class PersonManagedByUser(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+
+

@@ -5,9 +5,9 @@ from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
 
 from .models import Conference, Person, Registrant, \
-    Accommodation, AccommodationRoomOccupant, UserProfile
+    Accommodation, AccommodationRoomOccupant, UserProfile, PersonManagedByUser
 from .forms import ConferenceForm, PersonForm, RegistrantForm, \
-    AccommodationForm, AccommodationRoomOccupantForm, UserForm
+    AccommodationForm, AccommodationRoomOccupantForm, UserForm, PersonManagedByUserForm
 
 APP_PARAMS = {
         'app_name'                : 'Enjoy God!',
@@ -84,8 +84,16 @@ def log_me_out(request):
         }
     PP = dict(PAGE_PARAM, **APP_PARAMS)
     return render(request, 'confreg/login.html', PP)
+
 def account_registrant_list(request):
     page_title = 'Persons whom you have registered for'
+    form = UserForm(request.POST, instance=request.user)
+    form.save()
+    #user_family_name : request.POST.get('family_name')
+    #user_given_name : request.POST.get('given_name')
+    #user_zone : request.POST.get('zone')
+    #user_district : request.POST.get('district')
+    #user_mobile_no : request.POST.get('mobile_no')
     PAGE_PARAM = {
             'page_title': page_title,
         }
@@ -146,9 +154,9 @@ def conference_registrant_list(request):
     obj = Registrant.objects.all()
     persons = Person.objects.all()
     conferences = Conference.objects.all()
+    personmanagedbyuser = PersonManagedByUser.objects.filter(user=request.user.id)
     formset = PersonForm()
     PAGE_PARAM = {
-        
         'page_title': 'Conference details',
         'sub_title': 'Listing',
         'parent_id': 2,
@@ -156,8 +164,8 @@ def conference_registrant_list(request):
         'conferences': conferences,
         'persons': persons,
         'obj': obj,
-
-                'user_family_name' : request.POST.get('family_name'),
+        'personmanagedbyuser': personmanagedbyuser,
+        'user_family_name' : request.POST.get('family_name'),
         'user_given_name' : request.POST.get('given_name'),
         'user_zone' : request.POST.get('zone'),
         'user_district' : request.POST.get('district'),
