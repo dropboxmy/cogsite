@@ -17,9 +17,9 @@ APP_PARAMS = {
     }
 def create_account(request):
     #do create account
-    username = request.POST['email']
-    password = request.POST['password']
-    email    = request.POST['email']
+    username = request.POST.get('email')
+    password = request.POST.get('password')
+    email    = request.POST.get('email')
     print (username,password,email)
 
     PAGE_PARAM = {
@@ -54,7 +54,7 @@ def login(request):
                 'page_title':'Home',
             }
         PP = dict(PAGE_PARAM, **APP_PARAMS)
-        return render(request, 'confreg/create-account.html', PP,)
+        return render(request, 'confreg/account-registrant-list.html', PP,)
     else:
         applicants = Person.objects.order_by('created_date')
         PAGE_PARAM = {
@@ -79,6 +79,7 @@ def account_registrant_list(request):
         }
     PP = dict(PAGE_PARAM, **APP_PARAMS)
     return render(request, 'confreg/account-registrant-list.html', PP)
+
 def landing(request, conference_id=None):
     if request.method=='POST':
         conference = get_object_or_404(Conference)
@@ -117,7 +118,7 @@ def manage_conference(request, conference_id=None):
                  'manage_conference'
             )
         else:
-            return HttpResponse('Invalid form detected')
+            return HttpResponse('Invalid form detected -- check out where!!')
     else:
         PAGE_PARAM = {
             
@@ -178,6 +179,24 @@ def conference_accommodation(request):
     PP = dict(PAGE_PARAM, **APP_PARAMS)
     return render(request, 'confreg/conf-accommodation.html', PP)
 
+def registrant_accommodation(request):
+    conference_id=1
+
+    obj = Registrant.objects.filter(conference_id=conference_id)
+    rooms = Accommodation.objects.filter(conference_id=conference_id)
+    formset = AccommodationRoomOccupantForm()
+    #AccommodationRoomOccupantForm
+    PAGE_PARAM = {
+        
+        'page_title': 'Accommodation details',
+        'sub_title': 'Listing',
+        'parent_id': 1,
+        'formset':formset,
+        'rooms': rooms,
+        'obj': obj,
+    }
+    PP = dict(PAGE_PARAM, **APP_PARAMS)
+    return render(request, 'confreg/conf-accommodation.html', PP)
 
 def form_saved_or_updated(form, item, action_by):
     try:
@@ -188,3 +207,28 @@ def form_saved_or_updated(form, item, action_by):
         return True
     except:
         return False
+def reports(request,report_name=None):
+    if report_name is not None:
+        PAGE_PARAM = {
+                'page_title': report_name,
+                'report_name': report_name,
+            }
+        PP = dict(PAGE_PARAM, **APP_PARAMS)
+
+        if report_name=='conference_registrant_list':
+            conferences = Conference.objects.all().order_by('-id')
+            if conferences.count() > 0 :#what if there is no record??
+                conference_id_selected = request.POST.get('report_filter_conference', conferences.values('id')[:1])
+                conference = Conference.objects.get(pk=conference_id_selected)
+                obj = Registrant.objects.filter(conference_id=conference_id_selected)
+                PP = dict(
+                    {
+                        'conferences': conferences,
+                        'conference': conference,
+                        'obj': obj,
+                    }
+                    , **PP)
+            
+        return render(request, 'confreg/reports.html', PP)
+    else:
+        return HttpResponse('Invalid form detected -- check out where!!')

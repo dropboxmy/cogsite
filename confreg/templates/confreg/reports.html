@@ -1,0 +1,87 @@
+{% extends 'confreg/base.html' %}
+{% load staticfiles %}
+
+{% block right_col_main %}
+
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+
+                    <form method="post"
+                    action="{% url 'reports' report_name %}">
+                    {%csrf_token%}
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-6" for="report_filter_conference">Select conference {{conference_id}}</label>
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                          <select class="form-control" name="report_filter_conference" id="report_filter_conference">
+                            {% for conf in conferences %}
+                                <option value="{{conf.id}}"
+                                    {% if conf.id == conference.id %}selected{% endif %}>{{conf.name}}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+
+                    <input type="submit" value="Generate report">
+                    </form>
+
+
+                    </div>
+                    </div>
+                    </div>
+
+<!--################-->
+
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>{{page_title}}</h2>
+
+
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="x_panel">
+                        <div class="x_title">
+                            <h2>{{conference.name}} <small>({{ obj.count }} records found; current conference)</small></h2>
+
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                <th>#</th>
+                                <th>Family Name</th>
+                                <th>Given Name</th>
+                                <th>DOB</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            {% for item in obj %}
+                                <tr>
+                                <th scope="row">{{forloop.counter}}</th>
+                                <td>{{item.person.family_name}}</td>
+                                <td>{{item.person.given_name}}</td>
+                                <td>{{item.person.date_of_birth}}</td>
+                                </tr>
+                            {% endfor %}
+
+                            </tbody>
+                            </table>
+
+                        </div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+{% endblock %}
