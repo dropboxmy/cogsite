@@ -1,10 +1,13 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, get_user_model, logout
+from django.contrib.auth.models import User
+
+from django.forms.models import inlineformset_factory
 
 from .models import Conference, Person, Registrant, \
-    Accommodation, AccommodationRoomOccupant
+    Accommodation, AccommodationRoomOccupant, UserProfile
 from .forms import ConferenceForm, PersonForm, RegistrantForm, \
-    AccommodationForm, AccommodationRoomOccupantForm
+    AccommodationForm, AccommodationRoomOccupantForm, UserForm
 
 APP_PARAMS = {
         'app_name'                : 'Enjoy God!',
@@ -20,10 +23,19 @@ def create_account(request):
     username = request.POST.get('email')
     password = request.POST.get('password')
     email    = request.POST.get('email')
-    print (username,password,email)
+    
+    """ To-do
+    - Check if the username is already taken
+
+    """
+    username_is_available = True
+    if username_is_available:
+        user = User.objects.create_user(username, email, password)
+        user.save()
 
     PAGE_PARAM = {
             'page_title':'Your details',
+            'user':user,
         }
     PP = dict(PAGE_PARAM, **APP_PARAMS)
     return render(request, 'confreg/create-account.html', PP)
@@ -144,6 +156,12 @@ def conference_registrant_list(request):
         'conferences': conferences,
         'persons': persons,
         'obj': obj,
+
+                'user_family_name' : request.POST.get('family_name'),
+        'user_given_name' : request.POST.get('given_name'),
+        'user_zone' : request.POST.get('zone'),
+        'user_district' : request.POST.get('district'),
+        'user_mobile_no' : request.POST.get('mobile_no'),
     }
     PP = dict(PAGE_PARAM, **APP_PARAMS)
     return render(request, 'confreg/registrant-list.html', PP)
@@ -151,6 +169,14 @@ def conference_registrant_list(request):
 
 def conference_registrant_create(request):
     if request.method=='POST':
+        user_extended_fields = {
+        'user_family_name' : request.POST.get('family_name'),
+        'user_given_name' : request.POST.get('given_name'),
+        'user_zone' : request.POST.get('zone'),
+        'user_district' : request.POST.get('district'),
+        'user_mobile_no' : request.POST.get('mobile_no'),
+        }
+        
         person = PersonForm()
         form = PersonForm(request.POST)
         print()
@@ -158,7 +184,7 @@ def conference_registrant_create(request):
         print (form.is_valid())
         if form.is_valid():
             form.save()
-    return redirect('conference_registrant_list')
+    return redirect(request, 'conference_registrant_list', user_extended_fields)
 
 def conference_accommodation(request):
     conference_id=1
@@ -232,3 +258,36 @@ def reports(request,report_name=None):
         return render(request, 'confreg/reports.html', PP)
     else:
         return HttpResponse('Invalid form detected -- check out where!!')
+
+def edit_user(request, pk):
+    # querying the User object with pk from url
+    user = User.objects.get(pk=pk)
+
+    # prepopulate UserProfileForm with retrieved user values from above.
+    user_form = UserForm(instance=user)
+
+    # The sorcery begins from here, see explanation below
+    ProfileInlineFormset = inlineformset_factory(User, UserProfile, fields=('website', 'bio', 'phone', 'city', 'country', 'organization'))
+    formset = ProfileInlineFormset(instance=user)
+
+    if request.user.is_authenticated() and request.user.id == user.id:
+        if request.method == "POST":
+            user_form = UserForm(request.POST, request.FILES, instance=user)
+            formset = ProfileInlineFormset(request.POST, request.FILES, instance=user)
+
+            if user_form.is_valid():
+                created_user = user_form.save(commit=False)
+                formset = ProfileInlineFormset(request.POST, request.FILES, instance=created_user)
+
+                if formset.is_valid():
+                    created_user.save()
+                    formset.save()
+                    return HttpResponseRedirect('/accounts/profile/')
+
+        return render(request, "account/account_update.html", {
+            "noodle": pk,
+            "noodle_form": user_form,
+            "formset": formset,
+        })
+    else:
+        raise PermissionDenied

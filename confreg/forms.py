@@ -1,7 +1,8 @@
 from django import forms
+from django.contrib.auth.models import User
 
 from .models import Conference, Person, Registrant, \
-    Accommodation, AccommodationRoomOccupant
+    Accommodation, AccommodationRoomOccupant, UserProfile
 
 class ConferenceForm(forms.ModelForm):
     
@@ -31,3 +32,8 @@ class AccommodationRoomOccupantForm(forms.ModelForm):
     class Meta:
         model = AccommodationRoomOccupant
         fields = ['accommodation', 'registrant']
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email'] #'zone', 'district', 'mobile_no']

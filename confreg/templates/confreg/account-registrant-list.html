@@ -9,11 +9,20 @@
                 <div class="x_panel">
 
                     <form method="post"
-                    action="{% url 'conference_registrant_create' %}">
+                    action="{% url 'account_registrant_list' %}">
                     {%csrf_token%}
 
                     <ul>
                         {{ formset.as_ul }}
+                    </ul>
+
+                    <ul>
+
+                        <li>{{user_family_name}} user_family_name</li>
+                        <li>{{user_given_name}} user_given_name</li>
+                        <li>{{user_zone}} user_zone</li>
+                        <li>{{user_district}} user_district</li>
+                        <li>{{user_mobile_no}} user_mobile_no</li>
                     </ul>
 
                     <input type="submit">
