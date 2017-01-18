@@ -3,10 +3,12 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.login, name='login'),
-    url(r'^login/$', views.login, name='login'),
+    url(r'^$', views.log_me_in, name='log_me_in'),
+    url(r'^login/$', views.log_me_in, name='log_me_in'),
+    url(r'^login/#signup$', views.log_me_in, name='sign_me_up'),
     url(r'^logout/$', views.log_me_out, name='log_me_out'),
     url(r'^createaccount/$', views.create_account, name='create_account'),
+    url(r'^createaccount/$', views.create_account_add_profile, name='create_account_add_profile'),
 
     url(r'^account/registrants/$', views.account_registrant_list, name='account_registrant_list'),
     

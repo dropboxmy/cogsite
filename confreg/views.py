@@ -1,6 +1,8 @@
 from django.shortcuts import get_object_or_404, render, redirect
-from django.contrib.auth import authenticate, get_user_model, logout
+from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.models import User
+
+from django.contrib.auth.decorators import login_required
 
 from django.forms.models import inlineformset_factory
 
@@ -18,82 +20,149 @@ APP_PARAMS = {
         'bootstrap_min_integrity' : 'sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u',
         'bootstrap_crossorigin'   : 'anonymous',
     }
-def create_account(request):
-    #do create account
-    username = request.POST.get('email')
-    password = request.POST.get('password')
-    email    = request.POST.get('email')
-    
-    """ To-do
-    - Check if the username is already taken
 
-    """
-    username_is_available = True
-    if username_is_available:
-        user = User.objects.create_user(username, email, password)
-        user.save()
+LANDING_PAGE_PUBLIC = '/conf/account/registrants/'
+#LANDING_PAGE_ADMIN  = '/conf/account/registrants/'
+
+def dest_per_role_of(user):
+    return LANDING_PAGE_PUBLIC
+
+def create_account(request):
+    view_status_message = ''
+    if request.user.is_authenticated:
+        user = request.user
+        return redirect(dest_per_role_of(user))
+
+    elif request.method == 'POST':
+        if not request.user.is_authenticated:
+            #do create account
+            username = request.POST.get('email')
+            password = request.POST.get('password')
+            email    = request.POST.get('email')
+            
+            user = User.objects.filter(username=username)
+            if user.count() > 0:
+                # The username is not available
+                view_status_message = 'The username is not available!'
+                PAGE_PARAM = {
+                    'page_title': 'Your details',
+                    'view_status_message': view_status_message
+                }
+                PP = dict(PAGE_PARAM, **APP_PARAMS)
+                return redirect('sign_me_up')
+                
+            else:
+                # The username is available
+                user = User.objects.create_user(username, email, password)
+                user.save()
+                login(request, user)
+                
+        # else:
+        #     # i.e. user.is_authenticated() :
+        #     ProfileInlineFormset = inlineformset_factory(User, UserProfile, fields=('zone', 'district', 'mobile_no',))
+        #     formset = ProfileInlineFormset(instance=user)
+
+
+        #     form = UserForm(request.POST, instance=user)
+        #     formset = ProfileInlineFormset(request.POST, instance=user)
+
+        #     if form.is_valid() and formset.is_valid():
+        #         print ('valid forms')
+        #         form.cleaned_data['first_name'] = request.POST.get('given_name')
+        #         form.cleaned_data['last_name']  = request.POST.get('family_name')
+        #         form.save()
+
+        #         formset.save()
 
     PAGE_PARAM = {
-            'page_title':'Your details',
-            'user':user,
+            'page_title': 'Your details',
+            'view_status_message': view_status_message
         }
     PP = dict(PAGE_PARAM, **APP_PARAMS)
     return render(request, 'confreg/create-account.html', PP)
 
-def login(request):
-    print(request.user)
+def create_account_add_profile(request):
+    if request.method == 'POST':
+        user = request.user
+        ProfileInlineFormset = inlineformset_factory(User, UserProfile, fields=('zone', 'district', 'mobile_no',))
+        formset = ProfileInlineFormset(instance=user)
 
-    user_is_authenticated = False
-    if request.user is not None and request.user.is_authenticated:
-        user_is_authenticated = True
+        print ('formset')
+        print (formset)
+        form = UserForm(request.POST, instance=user)
+        formset = ProfileInlineFormset(request.POST, instance=user)
 
-        print ('user is valid')
-    else:
+        print ('form')
+        print (form)
+
+        if form.is_valid() and formset.is_valid():
+            print ('valid forms')
+            form.cleaned_data['first_name'] = request.POST.get('given_name')
+            form.cleaned_data['last_name']  = request.POST.get('family_name')
+            form.save()
+
+            formset.save()
+
+    PAGE_PARAM = {
+            'page_title': 'Your details',
+            'view_status_message': view_status_message
+        }
+    PP = dict(PAGE_PARAM, **APP_PARAMS)
+    return render(request, 'confreg/create-account.html', PP)
+
+
+def log_me_in(request):
+    login_message = ''
+    if request.method == 'POST':
         username = request.POST.get('login_username')
         password = request.POST.get('login_password')
         user = authenticate(username=username, password=password)
-
-        if user is not None and user.is_authenticated:
-            user_is_authenticated = True
-    
-    print(request.user)
-    
-    if user_is_authenticated:
-        # need to create a session to keep the user alive!!!
-
-        #request.user
-        PAGE_PARAM = {
-                'page_title':'Home',
-            }
-        PP = dict(PAGE_PARAM, **APP_PARAMS)
-        return render(request, 'confreg/account-registrant-list.html', PP,)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                return redirect(dest_per_role_of(user))
+            else:
+                # The account is not active/disabled
+                # Fall back to the same screen
+                
+                login_message = 'temp error message: disabled account'
+        else:
+            # The login is invalid
+            # Fall back to the same screen
+            
+            login_message = 'temp error message: invalid login'
+            
     else:
-        applicants = Person.objects.order_by('created_date')
-        PAGE_PARAM = {
-                'login_status': 'failed', 
-            }
+        # User opens the page from the browser directly
+        if request.user.is_authenticated:
+            return redirect(dest_per_role_of(user))
+        else:
 
-        PP = dict(PAGE_PARAM, **APP_PARAMS)
-        return render(request, 'confreg/login.html', PP)
+            login_message = 'Please login'
+            # Fall back to the same screen
+    page_title = 'Login'
+    
+    PAGE_PARAM = {
+        'page_title': page_title,
+        'login_message': login_message, 
+    }
+
+    PP = dict(PAGE_PARAM, **APP_PARAMS)
+    return render(request, 'confreg/login.html', PP)
 
 def log_me_out(request):
     logout(request)
     page_title = 'Logout'
     PAGE_PARAM = {
             'page_title': page_title,
+            'login_message': 'See you soon', 
         }
     PP = dict(PAGE_PARAM, **APP_PARAMS)
     return render(request, 'confreg/login.html', PP)
 
+@login_required
 def account_registrant_list(request):
-    page_title = 'Persons whom you have registered for'
-    form = UserForm(request.POST, instance=request.user)
-    form.save()
-    #user_family_name : request.POST.get('family_name')
-    #user_given_name : request.POST.get('given_name')
-    #user_zone : request.POST.get('zone')
-    #user_district : request.POST.get('district')
-    #user_mobile_no : request.POST.get('mobile_no')
+    page_title = 'Registrants'
     PAGE_PARAM = {
             'page_title': page_title,
         }
@@ -134,9 +203,7 @@ def manage_conference(request, conference_id=None):
             # TO-DO: Check if the key exists before proceed
             form = ConferenceForm(request.POST, instance=conference)
         if form.is_valid() and form_saved_or_updated(form, conference, request.user):
-            return redirect(
-                 'manage_conference'
-            )
+            return redirect('manage_conference')
         else:
             return HttpResponse('Invalid form detected -- check out where!!')
     else:
