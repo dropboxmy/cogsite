@@ -2,6 +2,8 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.models import User
 
+from django.http import HttpResponse
+
 from django.contrib.auth.decorators import login_required
 
 from django.forms.models import inlineformset_factory
@@ -69,7 +71,7 @@ def create_account(request):
     PP = dict(PAGE_PARAM, **APP_PARAMS)
     return render(request, 'confreg/create-account.html', PP)
 
-def create_account_add_profile(request):
+def create_profile(request):
     view_status_message = ''
     if request.method == 'POST':
         #user = request.user
@@ -99,7 +101,14 @@ def create_account_add_profile(request):
             user_form.save()
             userprofile_form.save()
 
-            return redirect(dest_per_role_of(user))
+            if 'create_profile_only' in request.POST:
+                return redirect(dest_per_role_of(user))
+            else:
+                if 'register_self' in request.POST:
+                    request.session['register_for_self'] = True
+                else:
+                    request.session['register_for_self'] = False
+                return redirect('registrant_details')
         else:
             # The form is invalid
             view_status_message = 'Invalid data, please contact admin.'
@@ -112,6 +121,21 @@ def create_account_add_profile(request):
     PP = dict(PAGE_PARAM, **APP_PARAMS)
     return render(request, 'confreg/create-account.html', PP)
 
+def registrant_details(request):
+    conferences = Conference.objects.all()
+    if request.method=='POST':
+        person_form = PersonForm()
+        if request.session['register_for_self']:
+            prepopulate_user = request.user
+            print (prepopulate_user)
+
+    PAGE_PARAM = {
+            'prepopulate_user': request.session['register_for_self'],
+            'conferences': conferences,
+            'page_title': 'Register for %s' % (request.session['register_for_self']),
+        }
+    PP = dict(PAGE_PARAM, **APP_PARAMS)
+    return render(request, 'confreg/account-registrant-details.html', PP)
 
 def log_me_in(request):
     login_message = ''
