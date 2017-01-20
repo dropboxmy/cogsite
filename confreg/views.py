@@ -9,7 +9,7 @@ from django.forms.models import inlineformset_factory
 from .models import Conference, Person, Registrant, \
     Accommodation, AccommodationRoomOccupant, UserProfile, PersonManagedByUser
 from .forms import ConferenceForm, PersonForm, RegistrantForm, \
-    AccommodationForm, AccommodationRoomOccupantForm, UserForm, PersonManagedByUserForm
+    AccommodationForm, AccommodationRoomOccupantForm, UserForm, UserProfileForm, PersonManagedByUserForm
 
 APP_PARAMS = {
         'app_name'                : 'Enjoy God!',
@@ -46,66 +46,68 @@ def create_account(request):
                 view_status_message = 'The username is not available!'
                 PAGE_PARAM = {
                     'page_title': 'Your details',
-                    'view_status_message': view_status_message
+                    'view_status_message': view_status_message,
                 }
                 PP = dict(PAGE_PARAM, **APP_PARAMS)
                 return redirect('sign_me_up')
                 
             else:
                 # The username is available
-                user = User.objects.create_user(username, email, password)
+                user = User.objects.create_user(username=username, password=password, email=email, \
+                    is_superuser = False, is_staff = False)
                 user.save()
+
+                user = authenticate(username=username, password=password)
                 login(request, user)
-                
-        # else:
-        #     # i.e. user.is_authenticated() :
-        #     ProfileInlineFormset = inlineformset_factory(User, UserProfile, fields=('zone', 'district', 'mobile_no',))
-        #     formset = ProfileInlineFormset(instance=user)
-
-
-        #     form = UserForm(request.POST, instance=user)
-        #     formset = ProfileInlineFormset(request.POST, instance=user)
-
-        #     if form.is_valid() and formset.is_valid():
-        #         print ('valid forms')
-        #         form.cleaned_data['first_name'] = request.POST.get('given_name')
-        #         form.cleaned_data['last_name']  = request.POST.get('family_name')
-        #         form.save()
-
-        #         formset.save()
+                # Error handling for failed creation
 
     PAGE_PARAM = {
+            # 'formset': formset,
             'page_title': 'Your details',
-            'view_status_message': view_status_message
+            'view_status_message': view_status_message,
         }
     PP = dict(PAGE_PARAM, **APP_PARAMS)
     return render(request, 'confreg/create-account.html', PP)
 
 def create_account_add_profile(request):
+    view_status_message = ''
     if request.method == 'POST':
-        user = request.user
-        ProfileInlineFormset = inlineformset_factory(User, UserProfile, fields=('zone', 'district', 'mobile_no',))
-        formset = ProfileInlineFormset(instance=user)
+        #user = request.user
+        user = User.objects.get(username=request.user)
+        print ()
+        print ('1 user: {}, email: {}'.format(user, user.email))
+        email = user.email
 
-        print ('formset')
-        print (formset)
         form = UserForm(request.POST, instance=user)
-        formset = ProfileInlineFormset(request.POST, instance=user)
+        print ('2 user: {}, email: {}'.format(user, user.email))
+        
+        userprofile_form = UserProfileForm(request.POST, instance=request.user.profile)
+        # ProfileInlineFormset = inlineformset_factory(User, UserProfile, fields=('zone', 'district', 'mobile_no',))
+        #formset = ProfileInlineFormset(request.POST, instance=user)
+        print ('3 user: {}, email: {}'.format(user, user.email))
 
-        print ('form')
-        print (form)
+        if form.is_valid() and userprofile_form.is_valid():
+            print ('4 user: {}, email: {}'.format(user, user.email))
 
-        if form.is_valid() and formset.is_valid():
-            print ('valid forms')
-            form.cleaned_data['first_name'] = request.POST.get('given_name')
-            form.cleaned_data['last_name']  = request.POST.get('family_name')
-            form.save()
+            user_form =  form.save(commit=False)
+            first_name = request.POST.get('given_name')
+            last_name = request.POST.get('family_name')
 
-            formset.save()
+            user_form.first_name = first_name
+            user_form.last_name = last_name
+            user_form.email = email # To prevent email field being overriden
+            user_form.save()
+            userprofile_form.save()
+
+            return redirect(dest_per_role_of(user))
+        else:
+            # The form is invalid
+            view_status_message = 'Invalid data, please contact admin.'
+            
 
     PAGE_PARAM = {
             'page_title': 'Your details',
-            'view_status_message': view_status_message
+            'view_status_message': view_status_message,
         }
     PP = dict(PAGE_PARAM, **APP_PARAMS)
     return render(request, 'confreg/create-account.html', PP)
@@ -135,10 +137,11 @@ def log_me_in(request):
     else:
         # User opens the page from the browser directly
         if request.user.is_authenticated:
+            user = request.user
             return redirect(dest_per_role_of(user))
         else:
 
-            login_message = 'Please login'
+            login_message = ''
             # Fall back to the same screen
     page_title = 'Login'
     

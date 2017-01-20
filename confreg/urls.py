@@ -8,7 +8,7 @@ urlpatterns = [
     url(r'^login/#signup$', views.log_me_in, name='sign_me_up'),
     url(r'^logout/$', views.log_me_out, name='log_me_out'),
     url(r'^createaccount/$', views.create_account, name='create_account'),
-    url(r'^createaccount/$', views.create_account_add_profile, name='create_account_add_profile'),
+    url(r'^createaccount/next/$', views.create_account_add_profile, name='create_account_add_profile'),
 
     url(r'^account/registrants/$', views.account_registrant_list, name='account_registrant_list'),
     

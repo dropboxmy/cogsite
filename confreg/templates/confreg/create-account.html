@@ -43,7 +43,6 @@
 
             <form method="post" action="{% url 'create_account_add_profile' %}">
               {% csrf_token %}
-
               <h1>{{page_title}}</h1>
               <h4>Enter <em>your own</em> details before you register for others</h4>
               <div>
@@ -53,6 +52,16 @@
               <div>
                 <input type="text" name="given_name" class="form-control" placeholder="Given name" required="required" />
               </div>
+
+              {{ formset.management_form }}
+              {% for form in formset %}
+              <div>
+                {{ form.zone }}
+                {{ form.district }}
+                {{ form.mobile_no }}
+              </div>
+              {% endfor %}
+
               <div>
                 <input type="text" name="zone" class="form-control" placeholder="Zone" required="required" />
               </div>

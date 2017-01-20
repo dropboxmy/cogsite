@@ -36,7 +36,12 @@ class AccommodationRoomOccupantForm(forms.ModelForm):
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email'] #'zone', 'district', 'mobile_no']
+        fields = ['first_name', 'last_name', 'email', 'is_superuser', 'is_staff']
+        
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['zone', 'district', 'mobile_no']
 
 
 class PersonManagedByUserForm(forms.ModelForm):
