@@ -123,18 +123,70 @@ def create_profile(request):
 
 def registrant_details(request):
     conferences = Conference.objects.all()
+    userprofile = UserProfile()
     if request.method=='POST':
+        
         person_form = PersonForm()
         if request.session['register_for_self']:
             prepopulate_user = request.user
-            print (prepopulate_user)
+            userprofile = UserProfile.objects.get(user_id=prepopulate_user.id)
 
+    else:
+        request.session['register_for_self'] = False ## The variable wouldn't exist since it is not post
     PAGE_PARAM = {
             'prepopulate_user': request.session['register_for_self'],
+            'userprofile': userprofile,
             'conferences': conferences,
             'page_title': 'Register for %s' % (request.session['register_for_self']),
         }
     PP = dict(PAGE_PARAM, **APP_PARAMS)
+    return render(request, 'confreg/account-registrant-details.html', PP)
+
+def registrant_details_update(request):
+    request.session['register_for_self'] = False
+    conferences = Conference.objects.all()
+
+    person_form = PersonForm()
+
+    if request.method=='POST':
+        user = User.objects.get(pk=request.user.id)
+        person_form = PersonForm(request.POST)
+        # conference_form = ConferenceForm(request.POST)
+        # conference_form.is_valid()
+
+        if person_form.is_valid():
+            person = person_form.save()
+
+            conference = request.POST.get('conference')
+            print(conference)
+
+            registrant_form = RegistrantForm({
+                'person': person.id,
+                'conference': conference,
+            })
+
+            personmanagedbyuser_form = PersonManagedByUserForm({
+                'user': user.id,
+                'person': person.id,
+            })
+
+            if personmanagedbyuser_form.is_valid() and registrant_form.is_valid():
+                personmanagedbyuser_form.save()
+                registrant_form.save()
+
+                # A person is successfully registered for a conference!
+
+    ##### TEMP
+    mode = True 
+
+    PAGE_PARAM = {
+            'prepopulate_user': mode,
+            'person_form': person_form,
+            'conferences': conferences,
+            'page_title': 'Register for %s' % (request.session['register_for_self']),
+        }
+    PP = dict(PAGE_PARAM, **APP_PARAMS)
+
     return render(request, 'confreg/account-registrant-details.html', PP)
 
 def log_me_in(request):
@@ -190,26 +242,30 @@ def log_me_out(request):
 @login_required
 def account_registrant_list(request):
     page_title = 'Registrants'
+    user = request.user
+    print(user.id)
+    conferences = Conference.objects.all()
+    registrants_managed_by_user = Registrant.objects.all()
+    persons_managed_by_user = Person.objects.filter(user=user)
+    print(registrants_managed_by_user)
     PAGE_PARAM = {
+            'conferences': conferences,
+            'persons': persons_managed_by_user,
+            'registrants': registrants_managed_by_user,
             'page_title': page_title,
         }
     PP = dict(PAGE_PARAM, **APP_PARAMS)
     return render(request, 'confreg/account-registrant-list.html', PP)
 
-def landing(request, conference_id=None):
+def registrant_history(request, conference_id=None):
+    conferences = Conference.objects.all()
+
     if request.method=='POST':
-        conference = get_object_or_404(Conference)
         form = ConferenceForm(request.POST)#, instance=conference)
         if form.is_valid():# and form_saved_or_updated(form, conference, request.user):
             form.save()
-        #     return redirect(
-        #          'manage_conference'
-        #     )
-        # else:
-        #     return HttpResponse('Invalid form detected')
-     #    else:
+
     formset = ConferenceForm()
-    conferences = Conference.objects.all()
     PAGE_PARAM = {
         
         'page_title': 'Conference details',

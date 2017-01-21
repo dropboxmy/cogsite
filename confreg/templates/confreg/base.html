@@ -32,7 +32,7 @@
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="{% url 'landing' %}" class="site_title"><i class="{{fa_class_logo}}"></i> <span>{{app_name}}</span></a>
+              <a href="{% url 'registrant_history' %}" class="site_title"><i class="{{fa_class_logo}}"></i> <span>{{app_name}}</span></a>
             </div>
 
             <div class="clearfix"></div>
@@ -58,7 +58,7 @@
                 <h3>Conference</h3>
                 <ul class="nav side-menu">
                   <li><a href="{% url 'account_registrant_list' %}"><i class="fa fa-home" aria-hidden="true"></i> Registration </a></li>
-                  <li><a href="{% url 'landing' %}"><i class="fa fa-history" aria-hidden="true"></i> History </a></li>
+                  <li><a href="{% url 'registrant_history' %}"><i class="fa fa-history" aria-hidden="true"></i> History </a></li>
 
 
               </div>
@@ -72,7 +72,7 @@
                   <li><a><i class="fa fa-black-tie" aria-hidden="true"></i> Manage conferences<span class="fa fa-chevron-down"></span>
                     </a>
                     <ul class="nav child_menu">
-                      <li><a href="{% url 'landing' %}">Conference </a></li>
+                      <li><a href="{% url 'registrant_history' %}">Conference </a></li>
                       <li><a href="{% url 'conference_accommodation' %}">Accommodation</a></li>
                     </ul>
                   </li>
@@ -127,7 +127,7 @@
                     <span class=" fa fa-angle-down"></span>
                   </a>
                   <ul class="dropdown-menu dropdown-usermenu pull-right">
-                    <li><a href="{% url 'landing'  %}"> Profile</a></li>
+                    <li><a href="{% url 'registrant_history'  %}"> Profile</a></li>
                     <li>
                       <a href="javascript:;">
                         <span class="badge bg-red pull-right">50%</span>

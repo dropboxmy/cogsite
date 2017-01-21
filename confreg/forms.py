@@ -16,10 +16,10 @@ class PersonForm(forms.ModelForm):
         fields = ['family_name', 'given_name', 'date_of_birth']
 
 class RegistrantForm(forms.ModelForm):
-    conference = forms.ModelMultipleChoiceField(queryset=Conference.objects.all())
+    #conference = forms.ModelMultipleChoiceField(queryset=Conference.objects.all())
     class Meta:
         model = Registrant
-        fields = ['conference', 'accommodation', 'remark']
+        fields = ['conference', 'person', 'remark']
 
 class AccommodationForm(forms.ModelForm):
     class Meta:

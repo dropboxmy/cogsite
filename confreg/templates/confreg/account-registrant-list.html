@@ -4,37 +4,6 @@
 {% block right_col_main %}
 
 
-            <div class="row">
-              <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="x_panel">
-
-                    <form method="post"
-                    action="{% url 'account_registrant_list' %}">
-                    {%csrf_token%}
-
-                    <ul>
-                        {{ formset.as_ul }}
-                    </ul>
-
-                    <ul>
-
-                        <li>{{user_family_name}} user_family_name</li>
-                        <li>{{user_given_name}} user_given_name</li>
-                        <li>{{user_zone}} user_zone</li>
-                        <li>{{user_district}} user_district</li>
-                        <li>{{user_mobile_no}} user_mobile_no</li>
-                    </ul>
-
-                    <input type="submit">
-                    </form>
-
-
-
-                    </div>
-                    </div>
-                    </div>
-
-<!--################-->
 
             <div class="row">
               <div class="col-md-12 col-sm-12 col-xs-12">
@@ -51,25 +20,29 @@
                         <div class="x_panel">
                         <div class="x_title">
                             <h2>People<small>({{ persons.count }})</small></h2>
-
                             <div class="clearfix"></div>
                         </div>
                         <div class="x_content">
+                            <div>
+                                <a href="{% url 'registrant_details' %}"> Add a new person </a>
+                            </div>
                             <table class="table table-hover">
                             <thead>
                                 <tr>
-                                <th>#</th>
-                                <th>Conference</th>
+                                {% for conference in conferences %}
+                                <th>{{conference}}</th>
+                                {% endfor %}
                                 <th>Name</th>
                                 </tr>
                             </thead>
                             <tbody>
 
-                            {% for item in personmanagedbyuser %}
+                            {% for item in persons %}
                                 <tr>
-                                <th scope="row">{{forloop.counter}}</th>
-                                <th><a href="{% url 'landing' %}{{item.person.id}}">{{item.person.id}} - Register</a></th>
-                                <td>{{item.person.family_name}} {{item.person.given_name}}</td>
+                                {% for conference in conferences %}
+                                <th><a href="{% url 'registrant_history' %}{{item.person.id}}">Register</a></th>
+                                {% endfor %}
+                                <td>{{item.family_name}} {{item.given_name}}</td>
                                 </tr>
                             {% endfor %}
 
@@ -108,21 +81,15 @@
                             <table class="table table-hover">
                             <thead>
                                 <tr>
-                                <th>#</th>
-                                <th>Family Name</th>
-                                <th>Given Name</th>
-                                <th>DOB</th>
+                                <th>Name</th>
                                 </tr>
                             </thead>
                             <tbody>
 
-                            {% for item in obj %}
-                                {% if item.conference.id == conference.id %}
+                            {% for item in registrants %}
+                                {% if item.conference.id == conference.id and item.person in persons  %}
                                 <tr>
-                                <th scope="row">{{forloop.counter}}</th>
-                                <td>{{item.person.family_name}}</td>
-                                <td>{{item.person.given_name}}</td>
-                                <td>{{item.person.date_of_birth}}</td>
+                                <td>{{item.person.family_name}} {{item.person.given_name}}</td>
                                 </tr>
                                 {% endif %}
                             {% endfor %}

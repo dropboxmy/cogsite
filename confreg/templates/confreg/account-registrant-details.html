@@ -7,15 +7,13 @@
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2>Form validation <small>sub title</small></h2>
+                    <h2>Registrant details <small>{{sub_title}}</small></h2>
 
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
 
-                    <form class="form-horizontal form-label-left"
-                    action="." method="POST"
-                     novalidate>
+                    <form id="form-with-details" action="{% url 'registrant_details_update' %}" method="post" class="form-horizontal form-label-left" novalidate>
                     {%csrf_token%}
                      
                       <span class="section">Conference</span>
@@ -23,10 +21,10 @@
                       <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Select a conference</label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <select class="select2_group form-control">
+                          <select id="conference" name="conference" class="select2_group form-control">
                             <optgroup label="Grouping">
                               {% for conference in conferences %}
-                              <option value="{{conference.id}}">{{conference}}</option>
+                                <option value="{{conference.id}}">{{conference}}</option>
                               {% endfor %}
                             </optgroup>
                           </select>
@@ -38,47 +36,72 @@
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last_name">Family Name <span class="required">*</span>
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input id="last_name" name="last_name" value="{% if prepopulate_user %}{{request.user.last_name}}{% endif %}" class="form-control col-md-7 col-xs-12" data-validate-length-range="2" data-validate-words="1" name="name" placeholder="surname or last name, e.g. Chan" required="required" type="text">
+                          <input id="last_name" name="family_name" value="{% if prepopulate_user %}{{request.user.last_name}}{% endif %}" class="form-control col-md-7 col-xs-12" data-validate-length-range="2" data-validate-words="1" placeholder="surname or last name, e.g. Chan" required="required" type="text">
                         </div>
                       </div>
                       <div class="item form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first_name">Given Name <span class="required">*</span>
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input id="first_name" name="first_name" value="{% if prepopulate_user %}{{request.user.first_name}}{% endif %}" class="form-control col-md-7 col-xs-12" data-validate-length-range="2" data-validate-words="1" name="name" placeholder="first name, e.g. Yue Han John" required="required" type="text">
+                          <input id="first_name" name="given_name" value="{% if prepopulate_user %}{{request.user.first_name}}{% endif %}" class="form-control col-md-7 col-xs-12" data-validate-length-range="2" data-validate-words="1" placeholder="first name, e.g. Yue Han John"  type="text">
                         </div>
                       </div>
 
                       <div class="item form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">Email <span class="required">*</span>
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">Email 
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="email" id="email" name="email" value="{% if prepopulate_user %}{{request.user.email}}{% endif %}" required="required" class="form-control col-md-7 col-xs-12">
+                          <input type="email" id="email" name="email" value="{% if prepopulate_user %}{{request.user.email}}{% endif %}" class="form-control col-md-7 col-xs-12">
                         </div>
                       </div>
 
                       <div class="item form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="occupation">Occupation 
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="dob">Date of birth 
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input id="occupation" type="text" name="occupation" data-validate-length-range="5,20" class="form-control col-md-7 col-xs-12">
+                          <input type="tel" id="date_of_birth" name="date_of_birth" data-validate-length-range="8,15" value="2014-11-06" class="form-control col-md-7 col-xs-12">
                         </div>
                       </div>
 
                       <div class="item form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="telephone">Telephone <span class="required">*</span>
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="zone">Zone 
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="tel" id="telephone" name="phone" required="required" data-validate-length-range="8,20" class="form-control col-md-7 col-xs-12">
+                          <input id="zone" type="text" name="zone" value="{% if prepopulate_user %}{{userprofile.zone}}{% endif %}" class="form-control col-md-7 col-xs-12">
                         </div>
                       </div>
+                      <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="district">District 
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                          <input id="district" type="text" name="district" value="{% if prepopulate_user %}{{userprofile.district}}{% endif %}" class="form-control col-md-7 col-xs-12">
+                        </div>
+                      </div>
+
+                      <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="telephone">Telephone 
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                          <input type="tel" id="telephone" name="telephone" data-validate-length-range="8,15" value="{% if prepopulate_user %}{{userprofile.mobile_no}}{% endif %}" class="form-control col-md-7 col-xs-12">
+                        </div>
+                      </div>
+
                       <div class="item form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="address">Address <span class="required">*</span>
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <textarea id="address" required="required" name="address" class="form-control col-md-7 col-xs-12"></textarea>
+                          <textarea id="address" xrequired="required" name="address" class="form-control col-md-7 col-xs-12"></textarea>
                         </div>
                       </div>
+
+                      <div class="item form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="address">Allergies 
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                          <textarea id="allergies" name="allergies" class="form-control col-md-7 col-xs-12"></textarea>
+                        </div>
+                      </div>
+
                       <div class="ln_solid"></div>
                       <div class="form-group">
                         <div class="col-md-6 col-md-offset-3">

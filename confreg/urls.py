@@ -12,8 +12,9 @@ urlpatterns = [
 
     url(r'^account/registrants/$', views.account_registrant_list, name='account_registrant_list'),
     url(r'^account/registrant/add/$', views.registrant_details, name='registrant_details'),
+    url(r'^account/registrant/update/$', views.registrant_details_update, name='registrant_details_update'),
 
-    url(r'^landing/$', views.landing, name='landing'),
+    url(r'^account/reigstrant/history/$', views.registrant_history, name='registrant_history'),
     url(r'^(?P<conference_id>[0-9]+)/$', views.manage_conference, name='manage_conference'),
 
     url(r'^registrant/$', views.conference_registrant_list, name='conference_registrant_list'),
