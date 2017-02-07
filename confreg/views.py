@@ -449,3 +449,15 @@ def edit_user(request, pk):
         })
     else:
         raise PermissionDenied
+
+def dashboard(request):
+    conference = Conference.objects.get(pk=1)
+    PAGE_PARAM = {
+            'page_title': 'Dashboard',
+            'conference': conference,
+        }
+    PP = dict(
+        PAGE_PARAM
+        , **APP_PARAMS)
+        
+    return render(request, 'confreg/admin-dashboard.html', PP)

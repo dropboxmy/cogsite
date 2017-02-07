@@ -1,4 +1,5 @@
 {% load staticfiles %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -11,19 +12,20 @@
     <title>{{app_name}} | {{page_title}}</title>
 
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="{{bootstrap_min_url}}" integrity="{{bootstrap_min_integrity}}" crossorigin="{{bootstrap_crossorigin}}">
-    <!--<link href="{% static 'vendors/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">-->
+    <!--<link rel="stylesheet" href="{{bootstrap_min_url}}" integrity="{{bootstrap_min_integrity}}" crossorigin="{{bootstrap_crossorigin}}">-->
+    <link href="{% static 'vendors/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="{% static 'vendors/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
     <!-- NProgress -->
     <link href="{% static 'vendors/nprogress/nprogress.css' %}" rel="stylesheet">
 
-    <!-- Custom Theme Style -->
-    <link href="{% static 'build/css/custom.min.css' %}" rel="stylesheet">
 
     {% block style %}
     {% endblock %}
+
+    <!-- Custom Theme Style -->
+    <link href="{% static 'build/css/custom.min.css' %}" rel="stylesheet">
   </head>
 
   <body class="nav-md">
@@ -59,15 +61,16 @@
                 <ul class="nav side-menu">
                   <li><a href="{% url 'account_registrant_list' %}"><i class="fa fa-home" aria-hidden="true"></i> Registration </a></li>
                   <li><a href="{% url 'registrant_history' %}"><i class="fa fa-history" aria-hidden="true"></i> History </a></li>
-
+                </ul>
 
               </div>
               <div class="menu_section">
                 <h3>Administration</h3>
                 <ul class="nav side-menu">
 
-                  <li><a href="{% url 'conference_registrant_list' %}"><i class="fa fa-check-square"></i> Registrants <span class="label label-success pull-right">*</span></a>  </li>
-                  <li><a href="{% url 'registrant_accommodation' %}"><i class="fa fa-hotel"></i> Accommodation </a> </li>
+                  <li><a href="{% url 'dashboard' %}"><i class="fa fa-wpexplorer" aria-hidden="true"></i> Dashboard <span class="label label-success pull-right">*</span></a>  </li>
+                  <li><a href="{% url 'conference_registrant_list' %}"><i class="fa fa-check-square" aria-hidden="true"></i> Registrants <span class="label label-success pull-right">*</span></a>  </li>
+                  <li><a href="{% url 'registrant_accommodation' %}"><i class="fa fa-hotel" aria-hidden="true"></i> Accommodation </a> </li>
 
                   <li><a><i class="fa fa-black-tie" aria-hidden="true"></i> Manage conferences<span class="fa fa-chevron-down"></span>
                     </a>
@@ -226,11 +229,12 @@
     <!-- NProgress -->
     <script src="{% static 'vendors/nprogress/nprogress.js' %}"></script>
     
-    <!-- Custom Theme Scripts -->
-    <script src="{% static 'build/js/custom.min.js' %}"></script>
-
 
     {% block scripts %}
     {% endblock %}
+
+    <!-- Custom Theme Scripts -->
+    <script src="{% static 'build/js/custom.min.js' %}"></script>
+
   </body>
 </html>
