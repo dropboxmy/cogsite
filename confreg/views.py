@@ -14,7 +14,7 @@ from .forms import ConferenceForm, PersonForm, RegistrantForm, \
     AccommodationForm, AccommodationRoomOccupantForm, UserForm, UserProfileForm, PersonManagedByUserForm
 
 APP_PARAMS = {
-        'app_name'                : 'Enjoy God!',
+        'app_name'                : 'Enjoy G!',
         'fa_class_logo'           : 'fa fa-cutlery',
         'copyright_by'            : '© Church of God (Singapore) 2017',
 
