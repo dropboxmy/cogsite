@@ -1,5 +1,7 @@
 *.pyc
 *~
+*.swp
+*.log
 __pycache__
 myproject
 db.sqlite3
